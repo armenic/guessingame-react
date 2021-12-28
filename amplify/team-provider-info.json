@@ -1,0 +1,23 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-guessingamereact-dev-212303-authRole",
+      "UnauthRoleArn": "arn:aws:iam::053926154100:role/amplify-guessingamereact-dev-212303-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::053926154100:role/amplify-guessingamereact-dev-212303-authRole",
+      "Region": "us-east-2",
+      "DeploymentBucketName": "amplify-guessingamereact-dev-212303-deployment",
+      "UnauthRoleName": "amplify-guessingamereact-dev-212303-unauthRole",
+      "StackName": "amplify-guessingamereact-dev-212303",
+      "StackId": "arn:aws:cloudformation:us-east-2:053926154100:stack/amplify-guessingamereact-dev-212303/16fe2b30-6785-11ec-8933-06a9ca5bc92c",
+      "AmplifyAppId": "d1xgms6mlpc3j3"
+    },
+    "categories": {
+      "hosting": {
+        "amplifyhosting": {
+          "appId": "d1xgms6mlpc3j3",
+          "type": "manual"
+        }
+      }
+    }
+  }
+}

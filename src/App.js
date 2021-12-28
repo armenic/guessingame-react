@@ -102,7 +102,7 @@ function App() {
 
   return (
     <Container>
-      <h1>Guessing Game</h1>
+      <h1>Number Guessing Game</h1>
       <br />
       {rangeSet && (
         <>

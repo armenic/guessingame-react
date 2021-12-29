@@ -12,7 +12,7 @@ function App() {
   const [name, setName] = useState("");
   const [numberGuesses, setNumberGuesses] = useState(5);
   const [minNumber, setMinNumber] = useState(1);
-  const [maxNumber, setMaxNumber] = useState(2);
+  const [maxNumber, setMaxNumber] = useState(10);
   const [secretNumber, setSecretNumber] = useState(0);
   const [playerNumber, setPlayerNumber] = useState(0);
   const [playerNumbers, setPlayerNumbers] = useState([]);
@@ -35,7 +35,6 @@ function App() {
     const value = parseInt(target.value);
 
     if (name === "playerName") {
-      setNameSet(false);
       setName(
         // take each word
         target.value.replace(/\w*/g, (w) =>

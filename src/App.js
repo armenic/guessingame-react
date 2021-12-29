@@ -17,15 +17,19 @@ function App() {
   const [playerNumber, setPlayerNumber] = useState(0);
   const [playerNumbers, setPlayerNumbers] = useState([]);
 
-  const [nameSet, setNameSet] = useState(false);
-  const [guessSet, setGuessSet] = useState(false);
-  const [rangeSet, setRangeSet] = useState(false);
-  const [gameEnd, setGameEnd] = useState(false);
+  const [chunk, setChunk] = useState({
+    nameSet: false,
+    guessSet: false,
+    rangeSet: false,
+    gameEnd: false,
+  });
 
-  const [alertRangeShow, setAlertRangeShow] = useState(false);
-  const [alertWinShow, setAlertWinShow] = useState(false);
-  const [alertLostShow, setAlertLostShow] = useState(false);
-  const [alertDiffShow, setAlertDiffShow] = useState(false);
+  const [alert, setAlert] = useState({
+    rangeShow: false,
+    winShow: false,
+    lostShow: false,
+    diffShow: false,
+  });
 
   const alertStyle = { width: "50%" };
 
@@ -44,12 +48,12 @@ function App() {
       );
     } else if (name === "playerNumber") {
       setPlayerNumber(value);
-      setAlertDiffShow(false);
+      setAlert({ ...alert, diffShow: false });
     } else if (name === "maxNumber") {
-      setAlertRangeShow(false);
+      setAlert({ ...alert, rangeShow: false });
       setMaxNumber(value);
     } else if (name === "minNumber") {
-      setAlertRangeShow(false);
+      setAlert({ ...alert, rangeShow: false });
       setMinNumber(value);
     } else if (name === "numberGuesses") {
       setNumberGuesses(value);
@@ -62,40 +66,43 @@ function App() {
     const name = target.name;
 
     if (name === "nameSubmit") {
-      setNameSet(true);
+      setChunk({ ...chunk, nameSet: true });
     } else if (name === "numberGuessesSubmit") {
-      setGuessSet(true);
+      setChunk({ ...chunk, guessSet: true });
     } else if (name === "rangeSubmit") {
       if (maxNumber > minNumber) {
-        setRangeSet(true);
+        setChunk({ ...chunk, rangeSet: true });
         setSecretNumber(getRandomIntInclusive(minNumber, maxNumber));
         setPlayerNumber(minNumber);
       } else {
-        setAlertRangeShow(true);
+        setAlert({ ...alert, rangeShow: true });
       }
     } else if (name === "playerNumberSubmit") {
       setPlayerNumbers((prevState) => [...prevState, playerNumber]);
-      setAlertDiffShow(false);
+      setAlert({ ...alert, diffShow: false });
       if (playerNumber === secretNumber) {
-        setAlertWinShow(true);
-        setGameEnd(true);
+        setAlert({ ...alert, winShow: true });
+        setChunk({ ...chunk, gameEnd: true });
       } else if (numberGuesses - 1 === 0) {
-        setAlertLostShow(true);
-        setGameEnd(true);
+        setAlert({ ...alert, lostShow: true });
+        setChunk({ ...chunk, gameEnd: true });
       } else {
         setNumberGuesses(numberGuesses - 1);
-        setAlertDiffShow(true);
+        setAlert({ ...alert, diffShow: true });
       }
     } else if (name === "playAgainSubmit") {
-      setAlertWinShow(false);
-      setAlertLostShow(false);
+      setAlert((alert) => ({ ...alert, winShow: false }));
+      setAlert((alert) => ({ ...alert, lostShow: false }));
       setNumberGuesses(5);
       setMinNumber(1);
       setMaxNumber(2);
       setPlayerNumbers([]);
-      setGuessSet(false);
-      setRangeSet(false);
-      setGameEnd(false);
+      // using an updater function for state update here is important since
+      // many state updates are scheduled and we want them to be done in a
+      // sequence (queue)
+      setChunk((chunk) => ({ ...chunk, guessSet: false }));
+      setChunk((chunk) => ({ ...chunk, rangeSet: false }));
+      setChunk((chunk) => ({ ...chunk, gameEnd: false }));
     }
   };
 
@@ -103,7 +110,7 @@ function App() {
     <Container>
       <h1>Number Guessing Game</h1>
       <br />
-      {rangeSet && (
+      {chunk.rangeSet && (
         <>
           <h3>Guesses left: {numberGuesses}</h3>
           <h5>
@@ -133,7 +140,7 @@ function App() {
         </>
       )}
       <br />
-      {!nameSet && (
+      {!chunk.nameSet && (
         <Form onSubmit={handleSubmit} name="nameSubmit">
           <Col xs={6}>
             <Form.Control
@@ -152,7 +159,7 @@ function App() {
         </Form>
       )}
 
-      {nameSet && !guessSet && (
+      {chunk.nameSet && !chunk.guessSet && (
         <Form onSubmit={handleSubmit} name="numberGuessesSubmit">
           <h3>Hello {name}!</h3>
           <h4>How lucky do you think you are?</h4>
@@ -175,7 +182,7 @@ function App() {
         </Form>
       )}
 
-      {guessSet && !rangeSet && (
+      {chunk.guessSet && !chunk.rangeSet && (
         <Form onSubmit={handleSubmit} name="rangeSubmit">
           <h5>{name}, please select min and max numbers to start the game.</h5>
           <Form.Label htmlFor="maxNumber">
@@ -216,7 +223,7 @@ function App() {
         </Form>
       )}
 
-      {rangeSet && !gameEnd && (
+      {chunk.rangeSet && !chunk.gameEnd && (
         <Form onSubmit={handleSubmit} name="playerNumberSubmit">
           <h5>
             {name}, I am thinking of a number between {minNumber} and{" "}
@@ -244,12 +251,12 @@ function App() {
         </Form>
       )}
 
-      {alertRangeShow && (
+      {alert.rangeShow && (
         <>
           <br />
           <Alert
             variant="danger"
-            onClose={() => setAlertRangeShow(false)}
+            onClose={() => setAlert({ ...alert, rangeShow: false })}
             dismissible
             style={alertStyle}
           >
@@ -262,12 +269,12 @@ function App() {
         </>
       )}
 
-      {alertDiffShow && (
+      {alert.diffShow && (
         <>
           <br />
           <Alert
             variant="warning"
-            onClose={() => setAlertDiffShow(false)}
+            onClose={() => setAlert({ ...alert, diffShow: false })}
             dismissible
             style={alertStyle}
           >
@@ -280,7 +287,7 @@ function App() {
         </>
       )}
 
-      {alertWinShow && (
+      {alert.winShow && (
         <>
           <br />
           <Alert variant="success" style={alertStyle}>
@@ -296,7 +303,7 @@ function App() {
         </>
       )}
 
-      {alertLostShow && (
+      {alert.lostShow && (
         <>
           <br />
           <Alert variant="danger" style={alertStyle}>

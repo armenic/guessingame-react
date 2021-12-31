@@ -1,5 +1,5 @@
 import { Container, Form, Button, Alert, Col } from "react-bootstrap";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 function getRandomIntInclusive(min, max) {
   min = Math.ceil(min);
@@ -31,6 +31,12 @@ function App() {
     diffShow: false,
   });
 
+  useEffect(() => {
+    if (chunk.gameEnd) {
+      setAlert((alert) => ({ ...alert, diffShow: false }));
+    }
+  }, [chunk.gameEnd]);
+
   const alertStyle = { width: "50%" };
 
   const handleInputChange = (event) => {
@@ -47,7 +53,7 @@ function App() {
         )
       );
     } else if (name === "playerNumber") {
-      setPlayerNumber(value);
+      setPlayerNumber(String(value));
       setAlert({ ...alert, diffShow: false });
     } else if (name === "maxNumber") {
       setAlert({ ...alert, rangeShow: false });
@@ -79,11 +85,11 @@ function App() {
       }
     } else if (name === "playerNumberSubmit") {
       setPlayerNumbers((prevState) => [...prevState, playerNumber]);
-      setAlert({ ...alert, diffShow: false });
-      if (playerNumber === secretNumber) {
+      if (playerNumber === String(secretNumber)) {
         setAlert({ ...alert, winShow: true });
         setChunk({ ...chunk, gameEnd: true });
       } else if (numberGuesses - 1 === 0) {
+        setNumberGuesses(numberGuesses - 1);
         setAlert({ ...alert, lostShow: true });
         setChunk({ ...chunk, gameEnd: true });
       } else {
@@ -95,7 +101,7 @@ function App() {
       setAlert((alert) => ({ ...alert, lostShow: false }));
       setNumberGuesses(5);
       setMinNumber(1);
-      setMaxNumber(2);
+      setMaxNumber(10);
       setPlayerNumbers([]);
       // using an updater function for state update here is important since
       // many state updates are scheduled and we want them to be done in a
@@ -129,7 +135,7 @@ function App() {
               }
 
               return (
-                <span>
+                <span key={i}>
                   {" "}
                   {number} {lessOrBigger}
                   {commaString}
